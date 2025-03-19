@@ -28,7 +28,7 @@ public class GasContainer: Container, IHazardous
         }
         else
         {
-            if (!product.getName().Equals(this.Product.getName()))
+            if (!product.Name.Equals(this.Product.Name))
             {
                 sendNotification();
                 return;

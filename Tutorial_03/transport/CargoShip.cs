@@ -6,7 +6,7 @@ namespace Tutorial_03.transport;
 
 public class CargoShip
 {
-    static int idCounter = 0;
+    static int idCounter = 1;
     
     private ArrayList containers = new ArrayList();
     private float maxSpeed;
@@ -108,6 +108,24 @@ public class CargoShip
     public int getShipId()
     {
         return this.shipId;
+    }
+
+    public float MaxSpeed
+    {
+        get => maxSpeed;
+        set => maxSpeed = value;
+    }
+
+    public int MaxNContainers
+    {
+        get => maxNContainers;
+        set => maxNContainers = value;
+    }
+
+    public float MaxCapacityTones
+    {
+        get => maxCapacityTones;
+        set => maxCapacityTones = value;
     }
 
     public override string ToString()

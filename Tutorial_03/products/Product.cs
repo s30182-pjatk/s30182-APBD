@@ -1,30 +1,32 @@
-namespace Tutorial_03.products;
-
-public class Product
+namespace Tutorial_03.products
 {
-    private string Name;
-    private float temperature;
-    private bool isHazardous;
-
-    public Product(string name, float temperature, bool isHazardous)
+    public class Product
     {
-        Name = name;
-        temperature = temperature;
-        isHazardous = isHazardous;
-    }
+        private string name;
+        private float temperature;
+        private bool isHazardous;
 
-    public bool IsHazardous()
-    {
-        return isHazardous;
-    }
+        public Product(string name, float temperature, bool isHazardous)
+        {
+            this.name = name;  // Use 'this' to refer to the instance variable.
+            this.temperature = temperature;
+            this.isHazardous = isHazardous;
+        }
 
-    public float getTemperature()
-    {
-        return temperature;
-    }
+        public bool IsHazardous()
+        {
+            return isHazardous;
+        }
 
-    public string getName()
-    {
-        return Name;
+        public float GetTemperature()
+        {
+            return temperature;
+        }
+
+        public string Name
+        {
+            get => name;  // Return the private backing field 'name'.
+            set => name = value ?? throw new ArgumentNullException(nameof(value));  // Set the backing field.
+        }
     }
 }

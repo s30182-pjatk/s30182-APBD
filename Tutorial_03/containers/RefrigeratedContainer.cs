@@ -23,10 +23,10 @@ public class RefrigeratedContainer : Container
  
     public override void Load(Product product, int mass)
     {
-        if (product.getTemperature() > containerTemperature &&
-            product.getName().Equals(this.cargoType))
+        if (product.GetTemperature() > containerTemperature &&
+            product.Name.Equals(this.cargoType))
         {
-            Console.WriteLine($"{mass}kg. {product.getName()} loaded in {this}");
+            Console.WriteLine($"{mass}kg. {product.Name} loaded in {this}");
             CargoMass += mass;
         }
     }

@@ -51,12 +51,16 @@ public abstract class Container
             return $"{SerialNumber}:empty";
         }
         
-        return $"{SerialNumber}:{Product.getName()}";
+        return $"{SerialNumber}:{Product.Name}";
     }
 
     public string getProductName()
     {
-        return Product.getName();
+        if (Product == null)
+        {
+            return "no product";
+        }
+        return Product.Name;
     }
     public abstract void Empty();
     public abstract void Load(Product product, int mass);
