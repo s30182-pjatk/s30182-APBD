@@ -1,5 +1,6 @@
 using System.Collections;
 using Tutorial_03.containers;
+using Tutorial_03.products;
 
 namespace Tutorial_03.transport;
 
@@ -80,6 +81,33 @@ public class CargoShip
         {
             Console.WriteLine($"{container} is not present on {ship}");
         }
+    }
+
+    public void replaceContainer(string serialNumber, Container containerReplacement)
+    {
+        foreach (Container container in containers)
+        {
+            if (container.getSerialNumber() == serialNumber)
+            {
+                containers.Remove(container);
+                containers.Add(containerReplacement);
+                Console.WriteLine($"{containerReplacement} replaced {container}");
+                return;
+            }
+        }
+        
+        Console.WriteLine($"{containerReplacement} not found on {this}");
+    }
+
+    public Product unLoadContainer(Container container)
+    {
+        Console.WriteLine($"{container} unloaded from {this}");
+        return container.getProduct();
+    }
+
+    public int getShipId()
+    {
+        return this.shipId;
     }
 
     public override string ToString()

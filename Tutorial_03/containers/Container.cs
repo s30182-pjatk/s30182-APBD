@@ -29,11 +29,35 @@ public abstract class Container
         return CargoMass;
     }
 
-    public override string ToString()
+    public string getSerialNumber()
     {
         return SerialNumber;
     }
-    
+
+    public Product getProduct()
+    {
+        return Product;
+    }
+
+    public float getMaxPayload()
+    {
+        return MaxPayload;
+    }
+
+    public override string ToString()
+    {
+        if (Product == null)
+        {
+            return $"{SerialNumber}:empty";
+        }
+        
+        return $"{SerialNumber}:{Product.getName()}";
+    }
+
+    public string getProductName()
+    {
+        return Product.getName();
+    }
     public abstract void Empty();
     public abstract void Load(Product product, int mass);
 }

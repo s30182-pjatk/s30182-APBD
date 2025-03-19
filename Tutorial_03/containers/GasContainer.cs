@@ -6,8 +6,8 @@ namespace Tutorial_03.containers;
 public class GasContainer: Container, IHazardous
 {
     private float pressure;
-    public GasContainer(int cargoMass, int height, int weight, int depth, float pressure) :
-        base(cargoMass, height, weight, depth, "L")
+    public GasContainer(int cargoMass = 0, int height = 2, int weight = 100, int depth = 1, float pressure = 0.1f) :
+        base(cargoMass, height, weight, depth, "G")
     {
         this.pressure = pressure;
     }

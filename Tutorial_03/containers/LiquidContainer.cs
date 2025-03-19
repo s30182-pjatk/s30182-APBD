@@ -4,7 +4,7 @@ namespace Tutorial_03.containers;
 
 public class LiquidContainer : Container, IHazardous
 {
-    public LiquidContainer(int cargoMass, int height, int weight, int depth)
+    public LiquidContainer(int cargoMass = 0, int height = 2, int weight = 150, int depth = 1)
         : base(cargoMass, height, weight, depth, "L")
     {
         
