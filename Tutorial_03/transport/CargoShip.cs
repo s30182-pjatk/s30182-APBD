@@ -25,7 +25,8 @@ public class CargoShip
 
     public void LoadContainer(Container container)
     {
-        if (containers.Count + 1 > maxNContainers &&
+        
+        if (containers.Count + 1 <= maxNContainers &&
             cargoWeight + getTTLweight()<= maxCapacityTones * 1000)
         {
             Console.WriteLine($"{container} loaded on {this}");
@@ -71,11 +72,11 @@ public class CargoShip
 
     public void moveContainerToShip(Container container, CargoShip ship)
     {
-        if (ship.containers.Contains(container))
+        if (this.containers.Contains(container))
         {
-            Console.WriteLine($"{container} moved to {this} from {ship}");
-            ship.RemoveContainer(container);
-            this.containers.Add(container);
+            Console.WriteLine($"{container} moved to {ship} from {this}");
+            this.RemoveContainer(container);
+            ship.containers.Add(container);
         }
         else
         {
@@ -83,26 +84,29 @@ public class CargoShip
         }
     }
 
-    public void replaceContainer(string serialNumber, Container containerReplacement)
+    public void replaceContainer(Container sContainer, Container containerReplacement)
     {
-        foreach (Container container in containers)
+        if (hasContainer(sContainer))
         {
-            if (container.getSerialNumber() == serialNumber)
-            {
-                containers.Remove(container);
-                containers.Add(containerReplacement);
-                Console.WriteLine($"{containerReplacement} replaced {container}");
-                return;
-            }
+            containers.Remove(sContainer);
+            containers.Add(containerReplacement);
+            Console.WriteLine($"{containerReplacement} replaced {sContainer}");
         }
-        
-        Console.WriteLine($"{containerReplacement} not found on {this}");
+        else
+        {
+            Console.WriteLine($"{containerReplacement} not found on {this}");
+        }
     }
 
     public Product unLoadContainer(Container container)
     {
         Console.WriteLine($"{container} unloaded from {this}");
         return container.getProduct();
+    }
+
+    public bool hasContainer(Container container)
+    {
+        return containers.Contains(container);
     }
 
     public int getShipId()
@@ -127,6 +131,8 @@ public class CargoShip
         get => maxCapacityTones;
         set => maxCapacityTones = value;
     }
+
+    public ArrayList Containers => containers;
 
     public override string ToString()
     {

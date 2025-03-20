@@ -22,7 +22,7 @@ public class GasContainer: Container, IHazardous
     public override void Load(Product product, int mass)
     { 
         // As far as I understood only one type of gas can be stored. Description appears to imply so.
-        if (product == null)
+        if (Product == null)
         {
             this.Product = product;
         }

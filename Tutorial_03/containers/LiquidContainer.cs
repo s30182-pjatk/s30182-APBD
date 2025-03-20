@@ -20,7 +20,7 @@ public class LiquidContainer : Container, IHazardous
     public override void Load(Product product, int mass)
     {
         
-        if (product == null)
+        if (Product == null)
         {
             this.Product = product;
         }

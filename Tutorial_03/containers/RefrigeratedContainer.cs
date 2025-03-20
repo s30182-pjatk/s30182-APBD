@@ -27,6 +27,7 @@ public class RefrigeratedContainer : Container
             product.Name.Equals(this.cargoType))
         {
             Console.WriteLine($"{mass}kg. {product.Name} loaded in {this}");
+            Product = product;
             CargoMass += mass;
         }
     }

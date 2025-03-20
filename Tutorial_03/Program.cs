@@ -44,11 +44,15 @@ public class Program
     {
         Container container = new LiquidContainer();
         Container container1 = new GasContainer();
-        CargoShip cargoShip = new CargoShip(12, 3, 1);
+        Container container2 = new RefrigeratedContainer("Bananas");
+        Container container3 = new RefrigeratedContainer("Chocolate");
+        CargoShip cargoShip = new CargoShip(12, 3, 2);
         CargoShip cargoShip2 = new CargoShip(12, 3, 2);
-        container.Load(nameProductMap["Bananas"], 20);
+        container.Load(nameProductMap["Fuel"], 100);
         systemContainers.Add(container);
         systemContainers.Add(container1);
+        systemContainers.Add(container2);
+        systemContainers.Add(container3);
         cargoShip.LoadContainer(container);
         systemCargoShips.Add(cargoShip);
         systemCargoShips.Add(cargoShip2);
@@ -189,6 +193,8 @@ public class Program
 10. Unload container. [serial number]
 11. Transfer container to another ship. [serialNumber] [cargo ship number from] [cargo ship number to]
 12. Replace container with another on a ship. [cargo ship number] [serialNumber] [serial Number]
+13. Load n number of containers. [cargo ship number] [serialNumber]*n
+14. Empty container. [serial number]
 ");
             
             Console.Write("->");
@@ -339,6 +345,34 @@ public class Program
                     }
                     
                     replaceContainerOnShip(int.Parse(parts[1]), parts[2], parts[3]);
+                    break;
+                case "13":
+                    if (parts.Length < 2)
+                    {
+                        Console.WriteLine("Invalid input.");
+                        continue;
+                    }
+                    CargoShip ship = getCargoShip(int.Parse(parts[1]));
+                    for (int i = 2; i < parts.Length; i++)
+                    {
+                        container = getContainer(parts[i]);
+                        if (!systemContainers.Contains(container))
+                        {
+                            Console.WriteLine($"Container not found: {container.getSerialNumber()}");
+                            continue;
+                        }
+                        ship.LoadContainer(container);
+                    }
+
+                    break;
+                case "14":
+                    if (parts.Length != 2)
+                    {
+                        Console.WriteLine("Invalid input.");
+                        continue;
+                    }
+                    container = getContainer(parts[1]);
+                    container.Empty();
                     break;
                 default:
                     Console.WriteLine("Invalid input.");
