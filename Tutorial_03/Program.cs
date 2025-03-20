@@ -40,71 +40,137 @@ public class Program
         
     }
 
+    public static void testInit()
+    {
+        Container container = new LiquidContainer();
+        Container container1 = new GasContainer();
+        CargoShip cargoShip = new CargoShip(12, 3, 1);
+        CargoShip cargoShip2 = new CargoShip(12, 3, 2);
+        container.Load(nameProductMap["Bananas"], 20);
+        systemContainers.Add(container);
+        systemContainers.Add(container1);
+        cargoShip.LoadContainer(container);
+        systemCargoShips.Add(cargoShip);
+        systemCargoShips.Add(cargoShip2);
+        
+    }
+
     public static void printProducts()
     {
         Console.WriteLine($"Available products: {String.Join(", ", nameProductMap.Keys)}");
     }
     public static void printtContainerData(string serialNumber)
     {
-        foreach (Container container in systemContainers)
+        
+        Container container = getContainer(serialNumber);
+        if (container != null)
         {
-            if (container.getSerialNumber() == serialNumber)
-            {
-                Console.WriteLine($"{container} data: " +
-                                  $" (product={container.getProductName()}, " +
-                                  $" cargo mass={container.getCargoMass()}, " +
-                                  $" max. payload={container.getMaxPayload()})");
-            }
+            Console.WriteLine($"{container.getSerialNumber()} data: " +
+                              $" (product={container.getProductName()}, " +
+                              $" cargo mass={container.getCargoMass()}, " +
+                              $" max. payload={container.getMaxPayload()})");
         }
     }
 
     public static void printCargoShipData(int cargoShipNumber)
     {
-        foreach (CargoShip ship in systemCargoShips)
+        CargoShip ship = getCargoShip(cargoShipNumber);
+        if (ship != null)
         {
-            if (ship.getShipId() == cargoShipNumber)
-            {
-                Console.WriteLine($"{ship} data: " +
-                                  $"max speed: {ship.MaxSpeed}, " +
-                                  $"max N containers: {ship.MaxNContainers}, " +
-                                  $"max cargo weigh: {ship.MaxCapacityTones} tons");
-            }
+            Console.WriteLine($"{ship} data: " +
+                              $"max speed: {ship.MaxSpeed}, " +
+                              $"max N containers: {ship.MaxNContainers}, " +
+                              $"max cargo weight: {ship.MaxCapacityTones} tons, " +
+                              $"cargo on board: {string.Join(", ", ship.Containers.ToArray())}");
         }
     }
 
     public static void removeContainer(string serialNumber)
     {
-        foreach (Container container in systemContainers)
-        {
-            if (container.getSerialNumber() == serialNumber)
-            {
-                systemContainers.Remove(container);
-                return;
-            }
-        }
-        
-        Console.WriteLine($"Container not found: {serialNumber}");
+        Container container = getContainer(serialNumber);
+        systemCargoShips.Remove(container);
     }
     
     public static void removeShip(int id)
     {
-        foreach (CargoShip ship in systemContainers)
+        CargoShip ship = getCargoShip(id);
+        systemCargoShips.Remove(ship);
+    }
+
+    public static void transferContainerToCargoShip(string serialNumber, int fromCargoShipNumber, int toCargoShipNumber)
+    {
+        Container container = getContainer(serialNumber);
+        CargoShip fromShip = getCargoShip(fromCargoShipNumber);
+        CargoShip toShip = getCargoShip(toCargoShipNumber);
+
+        if (container == null || fromShip == null || toShip == null)
         {
-            if (ship.getShipId() == id)
+            return;
+        }
+
+        fromShip.moveContainerToShip(container, toShip);
+        
+    }
+
+    public static void replaceContainerOnShip(int shipNumber, string serialNumber, string newSerialNumber)
+    {
+        Container container = getContainer(serialNumber);
+        Container newContainer = getContainer(newSerialNumber);
+        CargoShip fromShip = getCargoShip(shipNumber);
+        
+        // Check if container already on another ship
+        foreach (CargoShip ship in systemCargoShips)
+        {
+            if (ship.hasContainer(newContainer))
             {
-                systemContainers.Remove(ship);
+                Console.WriteLine("Container already on a ship. Transfer instead.");
                 return;
             }
         }
         
-        Console.WriteLine($"Ship not found: Cargo Ship #{id}");
+        fromShip.replaceContainer(container, newContainer);
     }
-    
+    public static Container getContainer(string serialNumber)
+    {
+        foreach (Container container in systemContainers)
+        {
+            if (container.getSerialNumber() == serialNumber)
+            {
+                return container;
+            }
+        }
+        
+        Console.WriteLine($"Container not found: {serialNumber}");
+        return null;
+    }
+
+    public static CargoShip getCargoShip(int id)
+    {
+        foreach (CargoShip ship in systemCargoShips)
+        {
+            if (ship.getShipId() == id)
+            {
+                return ship;
+            }
+        }
+        
+        Console.WriteLine($"Ship not found: Cargo Ship #{id}");
+        return null;
+    }
     
     public static void Main(string[] args)
     {
+        
+        
+        
+        // Placeholders
+        Container container;
+        CargoShip cargoShip;
         string line;
         initialiseProducts();
+        
+        // Testing method
+        testInit();
         while (true)
         {   
             Console.WriteLine($"\nList of container ships: {String.Join(", ",systemCargoShips.ToArray())}");
@@ -118,12 +184,18 @@ public class Program
 5. Get information about container. [serialNumber]
 6. Get information about cargo ship. [ship id number]
 7. Print available products.
+8. Load container to ship. [serialNumber] [cargo ship number]
+9. Load product to container. [product name] [mass] [serialNumber]
+10. Unload container. [serial number]
+11. Transfer container to another ship. [serialNumber] [cargo ship number from] [cargo ship number to]
+12. Replace container with another on a ship. [cargo ship number] [serialNumber] [serial Number]
 ");
             
             Console.Write("->");
             line = Console.ReadLine();
             string[] parts = line.Split(" ");
             Console.WriteLine();
+            
 
             switch (parts[0])
             {
@@ -133,7 +205,6 @@ public class Program
                         Console.WriteLine("Invalid input.");
                         continue;
                     }
-                    Container container;
                     string type = parts[1];
 
                     switch (type)
@@ -166,7 +237,7 @@ public class Program
                         Console.WriteLine("Invalid input.");
                         continue;
                     }
-                    CargoShip cargoShip = new CargoShip(float.Parse(parts[1]),
+                    cargoShip = new CargoShip(float.Parse(parts[1]),
                         int.Parse(parts[2]),
                         float.Parse(parts[3]));
                     systemCargoShips.Add(cargoShip);
@@ -215,6 +286,59 @@ public class Program
                         continue;
                     }
                     printProducts();
+                    break;
+                case "8":
+                    if (parts.Length != 3)
+                    {
+                        Console.WriteLine("Invalid input.");
+                        continue;
+                    }
+                    
+                    container = getContainer(parts[1]);
+                    cargoShip = getCargoShip(int.Parse(parts[2]));
+                    cargoShip.LoadContainer(container);
+                    break;
+                case "9":
+                    if (parts.Length != 4)
+                    {
+                        Console.WriteLine("Invalid input.");
+                        continue;
+                    }
+
+                    if (nameProductMap[parts[1]] == null)
+                    {
+                        Console.WriteLine("Invalid name product.");
+                        continue;
+                    }
+                    
+                    container = getContainer(parts[3]);
+                    container.Load(nameProductMap[parts[1]], int.Parse(parts[2]));
+                    break;
+                case "10":
+                    if (parts.Length != 2)
+                    {
+                        Console.WriteLine("Invalid input.");
+                        continue;
+                    }
+                    container = getContainer(parts[1]);
+                    container.Empty();
+                    break;
+                case "11":
+                    if (parts.Length != 4)
+                    {
+                        Console.WriteLine("Invalid input.");
+                        continue;
+                    }
+                    transferContainerToCargoShip(parts[1], int.Parse(parts[2]), int.Parse(parts[3]));
+                    break;
+                case "12":
+                    if (parts.Length != 4)
+                    {
+                        Console.WriteLine("Invalid input.");
+                        continue;
+                    }
+                    
+                    replaceContainerOnShip(int.Parse(parts[1]), parts[2], parts[3]);
                     break;
                 default:
                     Console.WriteLine("Invalid input.");
